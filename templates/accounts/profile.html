@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.username }} — NotifyHub{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card" style="padding:1.5rem;margin-bottom:1rem">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <span style="width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#fff">
+        {{ profile_user.username|first|upper }}
+      </span>
+      <div style="flex:1">
+        <h1 style="font-family:var(--font-display);font-size:1.3rem;font-weight:800">{{ profile_user.username }}</h1>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:2px">
+          <span>{{ followers_count }} follower{{ followers_count|pluralize }}</span>
+          <span style="margin:0 0.4rem">·</span>
+          <span>{{ following_count }} following</span>
+        </div>
+      </div>
+      {% if user != profile_user %}
+        <form method="post" action="/accounts/profile/{{ profile_user.username }}/follow/">
+          {% csrf_token %}
+          <button type="submit" class="btn {% if is_following %}btn-ghost{% else %}btn-primary{% endif %} btn-sm">
+            {% if is_following %}Unfollow{% else %}Follow{% endif %}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <h3 style="font-size:0.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">
+    Posts by {{ profile_user.username }}
+  </h3>
+
+  {% for post in posts %}
+    <div class="card" style="padding:1.1rem;margin-bottom:0.5rem">
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:0.3rem">
+        <a href="/posts/{{ post.pk }}/" style="color:var(--text);text-decoration:none">{{ post.title }}</a>
+      </h4>
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.5">
+        {{ post.body|truncatewords:25 }}
+      </p>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem">
+        {{ post.created_at|timesince }} ago
+      </div>
+    </div>
+  {% empty %}
+    <div class="card" style="padding:2rem;text-align:center;color:var(--muted)">
+      <div>No posts yet.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

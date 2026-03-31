@@ -14,9 +14,10 @@
           {{ post.author.username|first|upper }}
         </span>
         <div>
-          <span style="font-weight:600;font-size:0.825rem;color:var(--text)">
+          <a href="/accounts/profile/{{ post.author.username }}/"
+             style="font-weight:600;font-size:0.825rem;color:var(--text);text-decoration:none">
             {{ post.author.username }}
-          </span>
+          </a>
           <span style="font-size:0.72rem;color:var(--muted);margin-left:0.4rem">{{ post.created_at|timesince }} ago</span>
         </div>
       </div>
