@@ -116,6 +116,7 @@
   <a class="nav-brand" href="/">⚡ NotifyHub</a>
   <div class="nav-links">
     {% if user.is_authenticated %}
+      <a href="/feed/">Feed</a>
       <a href="/posts/">Posts</a>
       <a href="/accounts/profile/{{ user.username }}/">Profile</a>
       <span style="color:var(--muted); font-size:0.875rem; margin-right:0.5rem">Hello, {{ user.username }}</span>

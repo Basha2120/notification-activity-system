@@ -1,6 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from accounts.models import Follow
 from .models import Post
+
+@login_required
+def feed(request):
+    """Personalized activity feed: posts from users you follow."""
+    following_ids = Follow.objects.filter(
+        follower=request.user
+    ).values_list('following_id', flat=True)
+
+    posts = (
+        Post.objects
+        .filter(author_id__in=following_ids)
+        .select_related('author')
+        .order_by('-created_at')
+    )
+    return render(request, 'posts/feed.html', {'posts': posts})
 
 @login_required
 def post_list(request):
@@ -26,7 +42,7 @@ def create_post(request):
     return render(request, 'posts/create_post.html')
 
 def home(request):
-    """Redirect home to list of posts if logged in."""
+    """Redirect home to personal feed if logged in."""
     if request.user.is_authenticated:
-        return redirect('post-list')
+        return redirect('feed')
     return redirect('login')

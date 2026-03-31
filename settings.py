@@ -59,7 +59,7 @@ DATABASES = {
 }
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/posts/'
+LOGIN_REDIRECT_URL = '/feed/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 
