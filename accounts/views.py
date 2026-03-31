@@ -1,9 +1,9 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.contrib.auth import forms as auth_forms, login, logout
+from django.contrib.auth import forms as auth_forms, login
 from django.contrib import messages
 
 def register(request):
+    """Registration view for new users."""
     if request.user.is_authenticated:
         return redirect('feed')
     if request.method == 'POST':
@@ -11,7 +11,9 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('feed')
+            messages.success(request, f'Welcome, {user.username}! Your account has been created.')
+            # Redirection to feed or posts list
+            return redirect('/')
     else:
         form = auth_forms.UserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})

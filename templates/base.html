@@ -61,6 +61,7 @@
 
     /* ── LAYOUT ── */
     .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .container-wide { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
 
     /* ── CARDS ── */
     .card {
@@ -89,20 +90,22 @@
     /* ── FORM ── */
     .form-group { margin-bottom: 1rem; }
     label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; }
-    input[type=text], input[type=password], input[type=email] {
+    input[type=text], input[type=password], input[type=email], textarea, select {
       width: 100%; background: var(--surface2);
       border: 1px solid var(--border); border-radius: 6px;
       color: var(--text); font-family: var(--font-body); font-size: 0.9rem;
       padding: 0.55rem 0.75rem;
       outline: none; transition: border-color 0.15s;
     }
-    input:focus { border-color: var(--accent); }
+    input:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
 
     /* ── ALERTS ── */
     .alert {
       padding: 0.75rem 1rem; border-radius: 6px;
       font-size: 0.875rem; margin-bottom: 1rem;
     }
+    .alert-success { background: rgba(62,207,142,0.12); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
     .alert-info { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
   </style>
   {% block extra_head %}{% endblock %}
