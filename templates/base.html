@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NotifyHub{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161820;
+      --surface2: #1e2029;
+      --border: #2a2d3a;
+      --text: #e8eaf0;
+      --muted: #7c8098;
+      --accent: #7c6af7;
+      --accent-glow: rgba(124,106,247,0.18);
+      --green: #3ecf8e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --radius: 10px;
+      --font-body: 'DM Sans', sans-serif;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,15,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 800;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      padding: 0.4rem 0.75rem; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface2); }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 6px;
+      font-family: var(--font-body); font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; }
+    input[type=text], input[type=password], input[type=email] {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem;
+      padding: 0.55rem 0.75rem;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--accent); }
+
+    /* ── ALERTS ── */
+    .alert {
+      padding: 0.75rem 1rem; border-radius: 6px;
+      font-size: 0.875rem; margin-bottom: 1rem;
+    }
+    .alert-info { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">⚡ NotifyHub</a>
+  <div class="nav-links">
+    {% if user.is_authenticated %}
+      <span style="color:var(--muted); font-size:0.875rem; margin-right:0.5rem">Hello, {{ user.username }}</span>
+      <form method="post" action="/accounts/logout/" style="display:inline">
+        {% csrf_token %}
+        <button class="btn btn-ghost btn-sm" type="submit">Logout</button>
+      </form>
+    {% else %}
+      <a href="/accounts/login/">Login</a>
+      <a href="/accounts/register/">Register</a>
+    {% endif %}
+  </div>
+</nav>
+
+{% if messages %}
+  <div class="container" style="padding-bottom:0">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

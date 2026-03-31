@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login — NotifyHub{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 58px)">
+  <div style="width:100%;max-width:380px;padding:1.5rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--accent)">⚡ NotifyHub</div>
+      <div style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Sign in to your account</div>
+    </div>
+    <div class="card" style="padding:1.5rem">
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+          <div class="alert alert-info">Invalid credentials. Please try again.</div>
+        {% endif %}
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" name="username" autofocus>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Sign in</button>
+      </form>
+    </div>
+    <p style="text-align:center;font-size:0.85rem;color:var(--muted);margin-top:1rem">
+      No account? <a href="/accounts/register/" style="color:var(--accent)">Register</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
