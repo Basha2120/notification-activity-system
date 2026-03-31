@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import forms as auth_forms, login
+from django.contrib.auth import forms as auth_forms, login, get_user_model
 from django.contrib import messages
+
+User = get_user_model()
 
 from .models import Follow
 from posts.models import Post

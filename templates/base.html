@@ -59,19 +59,23 @@
     }
     .nav-links a:hover { color: var(--text); background: var(--surface2); }
 
-    /* ── BELL ── */
+    /* ── BELL Dropdown ── */
     .bell-wrap { position: relative; }
     .bell-btn {
       background: none; border: none; cursor: pointer;
       color: var(--muted); padding: 0.4rem 0.6rem;
       border-radius: 6px; font-size: 1.1rem;
       display: flex; align-items: center; gap: 0.4rem;
+      transition: color 0.15s, background 0.15s;
     }
+    .bell-btn:hover { color: var(--text); background: var(--surface2); }
     .bell-badge {
-      background: var(--accent); color: #fff;
+      background: var(--accent);
+      color: #fff;
       font-size: 0.65rem; font-weight: 700;
       border-radius: 999px; padding: 1px 5px;
       min-width: 18px; text-align: center;
+      line-height: 16px;
     }
     .bell-badge.hidden { display: none; }
 
@@ -80,50 +84,45 @@
       width: 320px; background: var(--surface);
       border: 1px solid var(--border); border-radius: var(--radius);
       box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      overflow: hidden;
     }
     .notif-dropdown.open { display: block; }
+    .notif-header {
+      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem; font-weight: 600;
+    }
+    .notif-header a { color: var(--accent); text-decoration: none; font-size: 0.75rem; }
     .notif-item {
-      display: flex; padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-      text-decoration: none; color: inherit; font-size: 0.85rem;
+      display: flex; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: inherit; font-size: 0.85rem; transistion: background 0.1s;
     }
     .notif-item:hover { background: var(--surface2); }
+    .notif-item.unread { background: rgba(124,106,247,0.05); }
 
-    /* ── LAYOUT ── */
+    /* ── TOAST ── */
+    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 999; }
+    .toast {
+      background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: var(--radius); padding: 0.75rem 1rem; min-width: 240px; font-size: 0.85rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4); animation: slideIn 0.2s ease;
+    }
+    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ── OTHER UI ── */
     .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
-    .container-wide { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-    }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.5rem 1rem; border-radius: 6px;
-      font-family: var(--font-body); font-size: 0.875rem; font-weight: 600;
-      cursor: pointer; border: none; text-decoration: none;
-      transition: opacity 0.15s;
-    }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 6px; font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; text-decoration: none; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
     .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
-
-    /* ── FORM ── */
     .form-group { margin-bottom: 1rem; }
-    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; }
-    input, textarea {
-      width: 100%; background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text); padding: 0.55rem 0.75rem; outline: none;
-    }
-
-    /* ── ALERTS ── */
+    input, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 0.55rem 0.75rem; outline: none; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .page-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
     .alert { padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.875rem; margin-bottom: 1rem; }
-    .alert-info { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
   </style>
-  {% block extra_head %}{% endblock %}
 </head>
 <body>
 
@@ -135,23 +134,27 @@
       <a href="/posts/">Posts</a>
       <a href="/accounts/profile/{{ user.username }}/">Profile</a>
 
-      <!-- Bell Dropdown -->
       <div class="bell-wrap" id="bellWrap">
         <button class="bell-btn" onclick="document.getElementById('notifDropdown').classList.toggle('open')">
-          🔔 <span class="bell-badge {% if unread_count == 0 %}hidden{% endif %}">{{ unread_count }}</span>
+          🔔 <span class="bell-badge {% if not unread_count %}hidden{% endif %}" id="bellBadge">{{ unread_count }}</span>
         </button>
         <div class="notif-dropdown" id="notifDropdown">
-          <div style="padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-size:0.8rem; font-weight:600">
-            Notifications
+          <div class="notif-header">
+            <span>Notifications</span>
+            <a href="/notifications/">See all</a>
           </div>
           {% for n in latest_notifications %}
-            <a href="/notifications/" class="notif-item">
+            <a href="/notifications/" class="notif-item {% if not n.is_read %}unread{% endif %}">
               {{ n.verb }}
             </a>
           {% empty %}
             <div style="padding:1rem; text-align:center; color:var(--muted); font-size:0.85rem">No notifications yet.</div>
           {% endfor %}
-          <a href="/notifications/" style="display:block; padding:0.6rem; text-align:center; font-size:0.75rem; color:var(--accent); text-decoration:none">See all</a>
+          {% if latest_notifications %}
+            <div style="padding:0.6rem; border-top:1px solid var(--border)">
+              <button class="btn btn-ghost btn-sm" style="width:100%" onclick="markAllRead()">Mark all as read</button>
+            </div>
+          {% endif %}
         </div>
       </div>
 
@@ -166,18 +169,56 @@
   </div>
 </nav>
 
-{% if messages %}
-  <div class="container" style="padding-bottom:0">{% for m in messages %}<div class="alert alert-{{ m.tags }}">{{ m }}</div>{% endfor %}</div>
-{% endif %}
+<div id="toast-container"></div>
+
+{% if messages %}<div class="container" style="padding-bottom:0">{% for m in messages %}<div class="alert alert-info">{{ m }}</div>{% endfor %}</div>{% endif %}
 
 {% block content %}{% endblock %}
 
 <script>
-  document.addEventListener('click', e => {
-    if (!document.getElementById('bellWrap').contains(e.target))
-      document.getElementById('notifDropdown').classList.remove('open');
-  });
+const CSRF = document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? '';
+
+async function refreshBadge() {
+  const r = await fetch('/api/notifications/unread-count/');
+  const { count } = await r.json();
+  const b = document.getElementById('bellBadge');
+  if (b) { b.textContent = count; b.classList.toggle('hidden', count === 0); }
+}
+
+async function markAllRead() {
+  await fetch('/api/notifications/read-all/', { method: 'POST', headers: { 'X-CSRFToken': CSRF } });
+  refreshBadge();
+  document.getElementById('notifDropdown').classList.remove('open');
+}
+
+function showToast(title, body) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<div style="font-weight:600; color:var(--accent); font-size:0.8rem">${title}</div>${body}`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 5000);
+}
+
+{% if user.is_authenticated %}
+(function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${proto}://${location.host}/ws/notifications/`);
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === 'notification') {
+      showToast('New notification', data.notification.verb);
+      refreshBadge();
+    }
+  };
+  ws.onclose = () => setTimeout(connectWS, 5000);
+})();
+{% endif %}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('bellWrap')?.contains(e.target))
+    document.getElementById('notifDropdown')?.classList.remove('open');
+});
 </script>
-{% block extra_js %}{% endblock %}
 </body>
 </html>

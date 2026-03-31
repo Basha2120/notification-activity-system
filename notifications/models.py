@@ -8,9 +8,7 @@ class NotificationType(models.Model):
     template = models.CharField(max_length=255)
     icon = models.CharField(max_length=50, default='bell')
     colour = models.CharField(max_length=7, default='#6366f1')
-
-    def __str__(self):
-        return self.code
+    def __str__(self): return self.code
 
 class Notification(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
@@ -22,9 +20,7 @@ class Notification(models.Model):
     target = GenericForeignKey('target_content_type', 'target_object_id')
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-created_at']
+    class Meta: ordering = ['-created_at']
 
 def create_notification(recipient, actor, notification_type_code, verb, target=None):
     if recipient == actor: return None
@@ -33,4 +29,19 @@ def create_notification(recipient, actor, notification_type_code, verb, target=N
     if target:
         kwargs['target_content_type'] = ContentType.objects.get_for_model(target)
         kwargs['target_object_id'] = target.pk
-    return Notification.objects.create(**kwargs)
+    notification = Notification.objects.create(**kwargs)
+    _push_notification(notification)
+    return notification
+
+def _push_notification(notification):
+    try:
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        from .serializers import NotificationSerializer
+        layer = get_channel_layer()
+        if layer:
+            async_to_sync(layer.group_send)(
+                f'notifications_{notification.recipient_id}',
+                {'type': 'notification_message', 'notification': NotificationSerializer(notification).data}
+            )
+    except Exception: pass
