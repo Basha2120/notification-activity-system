@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'posts',
 ]
 
 MIDDLEWARE = [
@@ -58,8 +59,9 @@ DATABASES = {
 }
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/posts/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
