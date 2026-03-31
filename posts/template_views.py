@@ -1,18 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from accounts.models import Follow
 from .models import Post, Comment
 
 @login_required
 def feed(request):
     """Personalized activity feed: posts from users you follow."""
-    following_ids = Follow.objects.filter(
-        follower=request.user
-    ).values_list('following_id', flat=True)
-
+    following_ids = Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)
     posts = (
-        Post.objects
-        .filter(author_id__in=following_ids)
+        Post.objects.filter(author_id__in=following_ids)
         .select_related('author')
         .prefetch_related('comments')
         .order_by('-created_at')
@@ -33,6 +30,7 @@ def post_detail(request, pk):
         body = request.POST.get('body', '').strip()
         if body:
             Comment.objects.create(post=post, author=request.user, body=body)
+            messages.success(request, 'Comment added!')
             return redirect('post-detail', pk=pk)
     return render(request, 'posts/post_detail.html', {'post': post})
 
@@ -44,11 +42,26 @@ def create_post(request):
         body = request.POST.get('body', '').strip()
         if title and body:
             Post.objects.create(author=request.user, title=title, body=body)
+            messages.success(request, 'Post created successfully!')
             return redirect('post-list')
     return render(request, 'posts/create_post.html')
 
+@login_required
+def post_delete(request, pk):
+    """View to delete a post (author only)."""
+    post = get_object_or_404(Post, pk=pk)
+    if post.author != request.user:
+        messages.error(request, "Permission denied.")
+        return redirect('post-detail', pk=pk)
+    
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, 'Post deleted.')
+        return redirect('post-list')
+    
+    return render(request, 'posts/post_delete_confirm.html', {'post': post})
+
 def home(request):
-    """Redirect home to personal feed if logged in."""
     if request.user.is_authenticated:
         return redirect('feed')
     return redirect('login')
