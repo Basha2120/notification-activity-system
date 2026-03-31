@@ -10,20 +10,24 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d0f14;
-      --surface: #161820;
-      --surface2: #1e2029;
-      --border: #2a2d3a;
-      --text: #e8eaf0;
-      --muted: #7c8098;
-      --accent: #7c6af7;
-      --accent-glow: rgba(124,106,247,0.18);
-      --green: #3ecf8e;
+      /* Modern Light Theme */
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface2: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.08);
+      --green: #10b981;
       --amber: #f59e0b;
       --red: #ef4444;
-      --radius: 10px;
+      --radius: 12px;
       --font-body: 'DM Sans', sans-serif;
       --font-display: 'Syne', sans-serif;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
 
     body {
@@ -31,97 +35,136 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── NAV ── */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(13,15,20,0.85);
+      background: rgba(255, 255, 255, 0.84);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 0 1.5rem;
-      height: 58px;
+      padding: 0 1rem;
+      height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .nav-brand {
       font-family: var(--font-display);
-      font-size: 1.2rem; font-weight: 800;
+      font-size: 1.25rem; font-weight: 800;
       color: var(--accent);
       text-decoration: none;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
     .nav-links { display: flex; align-items: center; gap: 0.25rem; }
     .nav-links a {
       color: var(--muted); text-decoration: none;
-      font-size: 0.875rem; font-weight: 500;
-      padding: 0.4rem 0.75rem; border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
+      font-size: 0.875rem; font-weight: 600;
+      padding: 0.5rem 0.75rem; border-radius: 8px;
+      transition: all 0.2s;
     }
-    .nav-links a:hover { color: var(--text); background: var(--surface2); }
+    .nav-links a:hover { color: var(--accent); background: var(--surface2); }
 
-    /* ── BELL Dropdown ── */
+    /* ── BELL ── */
     .bell-wrap { position: relative; }
     .bell-btn {
       background: none; border: none; cursor: pointer;
-      color: var(--muted); padding: 0.4rem 0.6rem;
-      border-radius: 6px; font-size: 1.1rem;
+      color: var(--muted); padding: 0.5rem 0.7rem;
+      border-radius: 8px; font-size: 1.15rem;
       display: flex; align-items: center; gap: 0.4rem;
-      transition: color 0.15s, background 0.15s;
+      transition: all 0.2s;
     }
-    .bell-btn:hover { color: var(--text); background: var(--surface2); }
+    .bell-btn:hover { color: var(--accent); background: var(--surface2); }
     .bell-badge {
-      background: var(--accent);
-      color: #fff;
+      background: var(--red); color: #fff;
       font-size: 0.65rem; font-weight: 700;
-      border-radius: 999px; padding: 1px 5px;
+      border-radius: 999px; padding: 2px 5px;
       min-width: 18px; text-align: center;
-      line-height: 16px;
+      line-height: 1; border: 2px solid var(--surface);
+      margin-left: -12px; margin-top: -12px;
     }
     .bell-badge.hidden { display: none; }
 
     .notif-dropdown {
-      display: none; position: absolute; right: 0; top: calc(100% + 8px);
-      width: 320px; background: var(--surface);
+      display: none; position: absolute; right: 0; top: calc(100% + 12px);
+      width: 340px; background: var(--surface);
       border: 1px solid var(--border); border-radius: var(--radius);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-      overflow: hidden;
+      box-shadow: var(--shadow-lg); overflow: hidden;
+      max-height: 480px; overflow-y: auto;
     }
     .notif-dropdown.open { display: block; }
     .notif-header {
-      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.8rem; font-weight: 600;
+      background: var(--surface);
     }
-    .notif-header a { color: var(--accent); text-decoration: none; font-size: 0.75rem; }
+    .notif-header span { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+    .notif-header a { color: var(--accent); text-decoration: none; font-size: 0.75rem; font-weight: 600; }
     .notif-item {
-      display: flex; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
-      text-decoration: none; color: inherit; font-size: 0.85rem; transistion: background 0.1s;
+      display: flex; padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: inherit; font-size: 0.875rem; transition: background 0.15s;
     }
     .notif-item:hover { background: var(--surface2); }
-    .notif-item.unread { background: rgba(124,106,247,0.05); }
+    .notif-item.unread { background: var(--accent-glow); }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 680px; margin: 0 auto; padding: 2rem 1rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+    .page-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      margin-bottom: 1rem; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.6rem 1.1rem; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface2); color: var(--muted); }
+    .btn-ghost:hover { background: var(--border); color: var(--text); }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; }
+    input, textarea {
+      width: 100%; background: #fff; border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 0.65rem 0.85rem; outline: none;
+      transition: all 0.2s; font-family: inherit; font-size: 0.95rem;
+    }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
     /* ── TOAST ── */
-    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 999; }
+    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 999; }
     .toast {
-      background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent);
-      border-radius: var(--radius); padding: 0.75rem 1rem; min-width: 240px; font-size: 0.85rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4); animation: slideIn 0.2s ease;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1rem 1.25rem; min-width: 280px; font-size: 0.9rem;
+      box-shadow: var(--shadow-lg); animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; gap: 0.25rem;
     }
-    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* ── OTHER UI ── */
-    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 6px; font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; text-decoration: none; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
-    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
-    .form-group { margin-bottom: 1rem; }
-    input, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 0.55rem 0.75rem; outline: none; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .page-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
-    .alert { padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.875rem; margin-bottom: 1rem; }
+    /* ── MOBILE RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 0 0.75rem; }
+      .nav-links a span { display: none; } /* Hide Hello, username on small screens */
+      .page-title { font-size: 1.4rem; }
+      .container { padding: 1.5rem 0.75rem; }
+      .notif-dropdown { width: calc(100vw - 2rem); right: -0.5rem; }
+      .card { padding: 1rem !important; }
+    }
+
+    .alert { padding: 0.75rem 1.1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1.25rem; font-weight: 500; }
+    .alert-info { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
   </style>
 </head>
 <body>
@@ -143,16 +186,21 @@
             <span>Notifications</span>
             <a href="/notifications/">See all</a>
           </div>
-          {% for n in latest_notifications %}
-            <a href="/notifications/" class="notif-item {% if not n.is_read %}unread{% endif %}">
-              {{ n.verb }}
-            </a>
-          {% empty %}
-            <div style="padding:1rem; text-align:center; color:var(--muted); font-size:0.85rem">No notifications yet.</div>
-          {% endfor %}
+          <div id="dropdownNotifList">
+            {% for n in latest_notifications %}
+              <a href="/notifications/" class="notif-item {% if not n.is_read %}unread{% endif %}">
+                <div style="flex:1">
+                  <div style="font-weight:500">{{ n.verb }}</div>
+                  <div style="font-size:0.75rem; color:var(--muted); margin-top:2px">{{ n.created_at|timesince }} ago</div>
+                </div>
+              </a>
+            {% empty %}
+              <div style="padding:1.5rem; text-align:center; color:var(--muted); font-size:0.875rem">No notifications yet.</div>
+            {% endfor %}
+          </div>
           {% if latest_notifications %}
-            <div style="padding:0.6rem; border-top:1px solid var(--border)">
-              <button class="btn btn-ghost btn-sm" style="width:100%" onclick="markAllRead()">Mark all as read</button>
+            <div style="padding:0.75rem 1rem; border-top:1px solid var(--border); background: var(--surface2)">
+              <button class="btn btn-ghost btn-sm" style="width:100%; background: #fff" onclick="markAllRead()">Mark all as read</button>
             </div>
           {% endif %}
         </div>
@@ -189,15 +237,21 @@ async function markAllRead() {
   await fetch('/api/notifications/read-all/', { method: 'POST', headers: { 'X-CSRFToken': CSRF } });
   refreshBadge();
   document.getElementById('notifDropdown').classList.remove('open');
+  // Optional: visually mark items as read
+  document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
 }
 
 function showToast(title, body) {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = 'toast';
-  t.innerHTML = `<div style="font-weight:600; color:var(--accent); font-size:0.8rem">${title}</div>${body}`;
+  t.innerHTML = `<div style="font-weight:700; color:var(--accent); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em">${title}</div><div style="font-weight:500">${body}</div>`;
   c.appendChild(t);
-  setTimeout(() => t.remove(), 5000);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(20px)';
+    setTimeout(() => t.remove(), 300);
+  }, 5000);
 }
 
 {% if user.is_authenticated %}
@@ -207,8 +261,10 @@ function showToast(title, body) {
   ws.onmessage = (e) => {
     const data = JSON.parse(e.data);
     if (data.type === 'notification') {
-      showToast('New notification', data.notification.verb);
+      showToast('Notification', data.notification.verb);
       refreshBadge();
+      // Prepend to dropdown if open/visible? 
+      // For now, refreshBadge is core.
     }
   };
   ws.onclose = () => setTimeout(connectWS, 5000);
@@ -216,9 +272,13 @@ function showToast(title, body) {
 {% endif %}
 
 document.addEventListener('click', e => {
-  if (!document.getElementById('bellWrap')?.contains(e.target))
-    document.getElementById('notifDropdown')?.classList.remove('open');
+  const bellWrap = document.getElementById('bellWrap');
+  const notifDropdown = document.getElementById('notifDropdown');
+  if (bellWrap && !bellWrap.contains(e.target)) {
+    notifDropdown.classList.remove('open');
+  }
 });
 </script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
