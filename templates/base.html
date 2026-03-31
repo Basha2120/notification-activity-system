@@ -59,6 +59,36 @@
     }
     .nav-links a:hover { color: var(--text); background: var(--surface2); }
 
+    /* ── BELL ── */
+    .bell-wrap { position: relative; }
+    .bell-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 0.4rem 0.6rem;
+      border-radius: 6px; font-size: 1.1rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .bell-badge {
+      background: var(--accent); color: #fff;
+      font-size: 0.65rem; font-weight: 700;
+      border-radius: 999px; padding: 1px 5px;
+      min-width: 18px; text-align: center;
+    }
+    .bell-badge.hidden { display: none; }
+
+    .notif-dropdown {
+      display: none; position: absolute; right: 0; top: calc(100% + 8px);
+      width: 320px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    }
+    .notif-dropdown.open { display: block; }
+    .notif-item {
+      display: flex; padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none; color: inherit; font-size: 0.85rem;
+    }
+    .notif-item:hover { background: var(--surface2); }
+
     /* ── LAYOUT ── */
     .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
     .container-wide { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
@@ -75,37 +105,22 @@
       padding: 0.5rem 1rem; border-radius: 6px;
       font-family: var(--font-body); font-size: 0.875rem; font-weight: 600;
       cursor: pointer; border: none; text-decoration: none;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: opacity 0.15s;
     }
-    .btn:active { transform: scale(0.97); }
     .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-ghost {
-      background: transparent; color: var(--muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
     .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
 
     /* ── FORM ── */
     .form-group { margin-bottom: 1rem; }
     label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; }
-    input[type=text], input[type=password], input[type=email], textarea, select {
-      width: 100%; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text); font-family: var(--font-body); font-size: 0.9rem;
-      padding: 0.55rem 0.75rem;
-      outline: none; transition: border-color 0.15s;
+    input, textarea {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); padding: 0.55rem 0.75rem; outline: none;
     }
-    input:focus, textarea:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 80px; }
 
     /* ── ALERTS ── */
-    .alert {
-      padding: 0.75rem 1rem; border-radius: 6px;
-      font-size: 0.875rem; margin-bottom: 1rem;
-    }
-    .alert-success { background: rgba(62,207,142,0.12); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
+    .alert { padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.875rem; margin-bottom: 1rem; }
     .alert-info { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(124,106,247,0.25); }
   </style>
   {% block extra_head %}{% endblock %}
@@ -119,7 +134,27 @@
       <a href="/feed/">Feed</a>
       <a href="/posts/">Posts</a>
       <a href="/accounts/profile/{{ user.username }}/">Profile</a>
-      <span style="color:var(--muted); font-size:0.875rem; margin-right:0.5rem">Hello, {{ user.username }}</span>
+
+      <!-- Bell Dropdown -->
+      <div class="bell-wrap" id="bellWrap">
+        <button class="bell-btn" onclick="document.getElementById('notifDropdown').classList.toggle('open')">
+          🔔 <span class="bell-badge {% if unread_count == 0 %}hidden{% endif %}">{{ unread_count }}</span>
+        </button>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div style="padding:0.75rem 1rem; border-bottom:1px solid var(--border); font-size:0.8rem; font-weight:600">
+            Notifications
+          </div>
+          {% for n in latest_notifications %}
+            <a href="/notifications/" class="notif-item">
+              {{ n.verb }}
+            </a>
+          {% empty %}
+            <div style="padding:1rem; text-align:center; color:var(--muted); font-size:0.85rem">No notifications yet.</div>
+          {% endfor %}
+          <a href="/notifications/" style="display:block; padding:0.6rem; text-align:center; font-size:0.75rem; color:var(--accent); text-decoration:none">See all</a>
+        </div>
+      </div>
+
       <form method="post" action="/accounts/logout/" style="display:inline">
         {% csrf_token %}
         <button class="btn btn-ghost btn-sm" type="submit">Logout</button>
@@ -132,15 +167,17 @@
 </nav>
 
 {% if messages %}
-  <div class="container" style="padding-bottom:0">
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  </div>
+  <div class="container" style="padding-bottom:0">{% for m in messages %}<div class="alert alert-{{ m.tags }}">{{ m }}</div>{% endfor %}</div>
 {% endif %}
 
 {% block content %}{% endblock %}
 
+<script>
+  document.addEventListener('click', e => {
+    if (!document.getElementById('bellWrap').contains(e.target))
+      document.getElementById('notifDropdown').classList.remove('open');
+  });
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

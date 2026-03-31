@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from accounts.models import Follow
-from .models import Post
+from .models import Post, Comment
 
 @login_required
 def feed(request):
@@ -14,6 +14,7 @@ def feed(request):
         Post.objects
         .filter(author_id__in=following_ids)
         .select_related('author')
+        .prefetch_related('comments')
         .order_by('-created_at')
     )
     return render(request, 'posts/feed.html', {'posts': posts})
@@ -21,13 +22,18 @@ def feed(request):
 @login_required
 def post_list(request):
     """View to list all posts."""
-    posts = Post.objects.all().select_related('author').order_by('-created_at')
+    posts = Post.objects.all().select_related('author').prefetch_related('comments').order_by('-created_at')
     return render(request, 'posts/post_list.html', {'posts': posts})
 
 @login_required
 def post_detail(request, pk):
-    """View to see post details. No comments at this stage."""
-    post = get_object_or_404(Post.objects.select_related('author'), pk=pk)
+    """View to see post details and add comments."""
+    post = get_object_or_404(Post.objects.select_related('author').prefetch_related('comments__author'), pk=pk)
+    if request.method == 'POST':
+        body = request.POST.get('body', '').strip()
+        if body:
+            Comment.objects.create(post=post, author=request.user, body=body)
+            return redirect('post-detail', pk=pk)
     return render(request, 'posts/post_detail.html', {'post': post})
 
 @login_required

@@ -6,14 +6,13 @@
     <a href="/posts/" style="color:var(--muted);font-size:0.85rem;text-decoration:none;display:inline-block">← Back to Posts</a>
   </div>
 
-  <div class="card" style="padding:1.5rem;margin-bottom:1rem">
+  <div class="card" style="padding:1.5rem;margin-bottom:1.5rem">
     <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem">
       <span style="width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#fff">
         {{ post.author.username|first|upper }}
       </span>
       <div>
-        <a href="/accounts/profile/{{ post.author.username }}/"
-           style="font-weight:600;font-size:0.875rem;color:var(--text);text-decoration:none">
+        <a href="/accounts/profile/{{ post.author.username }}/" style="font-weight:600;font-size:0.875rem;color:var(--text);text-decoration:none">
           {{ post.author.username }}
         </a>
         <div style="font-size:0.72rem;color:var(--muted)">{{ post.created_at|timesince }} ago</div>
@@ -21,6 +20,36 @@
     </div>
     <h1 style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;margin-bottom:0.75rem">{{ post.title }}</h1>
     <p style="font-size:0.9rem;line-height:1.7;color:var(--muted)">{{ post.body }}</p>
+  </div>
+
+  <h3 style="font-size:0.875rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:0.75rem">
+    {{ post.comments.count }} Comment{{ post.comments.count|pluralize }}
+  </h3>
+
+  {% for comment in post.comments.all %}
+    <div class="card" style="padding:1rem;margin-bottom:0.5rem">
+      <div style="display:flex;gap:0.6rem">
+        <span style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0">
+          {{ comment.author.username|first|upper }}
+        </span>
+        <div style="flex:1">
+          <div style="display:flex;gap:0.5rem;align-items:baseline;margin-bottom:0.25rem">
+            <span style="font-weight:600;font-size:0.8rem;color:var(--text)">{{ comment.author.username }}</span>
+            <span style="font-size:0.7rem;color:var(--muted)">{{ comment.created_at|timesince }} ago</span>
+          </div>
+          <p style="font-size:0.85rem;line-height:1.55;color:var(--muted)">{{ comment.body }}</p>
+        </div>
+      </div>
+    </div>
+  {% empty %}<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">No comments yet.</p>{% endfor %}
+
+  <div class="card" style="padding:1.25rem;margin-top:1.5rem">
+    <h3 style="font-size:0.875rem;font-weight:700;margin-bottom:0.75rem">Add a comment</h3>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><textarea name="body" rows="3" placeholder="Write something…"></textarea></div>
+      <button type="submit" class="btn btn-primary btn-sm">Post comment</button>
+    </form>
   </div>
 </div>
 {% endblock %}

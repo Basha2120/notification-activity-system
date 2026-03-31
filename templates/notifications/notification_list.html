@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Notifications — NotifyHub{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Notifications</h1>
+  </div>
+
+  <div class="card">
+    {% for n in notifications %}
+      <div class="notif-item {% if not n.is_read %}unread{% endif %}" style="padding:1.25rem; border-bottom:1px solid var(--border); display:flex; gap:1rem">
+        <span style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700">
+          {{ n.actor.username|first|upper }}
+        </span>
+        <div>
+          <div style="font-size:0.9rem">{{ n.verb }}</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:0.25rem">{{ n.created_at|timesince }} ago</div>
+        </div>
+      </div>
+    {% empty %}
+      <div style="padding:3rem; text-align:center; color:var(--muted)">You have no notifications.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
