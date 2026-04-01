@@ -403,7 +403,7 @@
             {% for n in latest_notifications %}
             <a href="{% url 'notification-redirect' n.id %}" class="notif-item {% if not n.is_read %}unread{% endif %}">
               <div style="flex:1">
-                <div style="font-weight:500">{{ n.verb }}</div>
+                <div style="font-weight:500"><strong>{{ n.actor.username }}</strong> {{ n.verb }}</div>
                 <div style="font-size:0.75rem; color:var(--muted); margin-top:2px">{{ n.created_at|timesince }} ago
                 </div>
               </div>
@@ -480,7 +480,8 @@
         ws.onmessage = (e) => {
           const data = JSON.parse(e.data);
           if (data.type === 'notification') {
-            showToast('Notification', data.notification.verb);
+            const verb = `<strong>${data.notification.actor.username}</strong> ${data.notification.verb}`;
+            showToast('Notification', verb);
             refreshBadge();
           }
         };

@@ -14,7 +14,7 @@
           {{ n.actor.username|first|upper }}
         </span>
         <div>
-          <div style="font-size:0.9rem; font-weight:500">{{ n.verb }}</div>
+          <div style="font-size:0.9rem; font-weight:500"><strong>{{ n.actor.username }}</strong> {{ n.verb }}</div>
           <div style="font-size:0.75rem; color:var(--muted); margin-top:0.25rem">{{ n.created_at|timesince }} ago</div>
         </div>
       </a>
