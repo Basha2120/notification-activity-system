@@ -409,7 +409,7 @@
           </div>
           <div id="dropdownNotifList">
             {% for n in latest_notifications %}
-            <a href="/notifications/" class="notif-item {% if not n.is_read %}unread{% endif %}">
+            <a href="{% url 'notification-redirect' n.id %}" class="notif-item {% if not n.is_read %}unread{% endif %}">
               <div style="flex:1">
                 <div style="font-weight:500">{{ n.verb }}</div>
                 <div style="font-size:0.75rem; color:var(--muted); margin-top:2px">{{ n.created_at|timesince }} ago

@@ -9,15 +9,15 @@
 
   <div class="card">
     {% for n in notifications %}
-      <div class="notif-item {% if not n.is_read %}unread{% endif %}" style="padding:1.25rem; border-bottom:1px solid var(--border); display:flex; gap:1rem">
-        <span style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700">
+      <a href="{% url 'notification-redirect' n.id %}" class="notif-item {% if not n.is_read %}unread{% endif %}" style="padding:1.25rem; border-bottom:1px solid var(--border); display:flex; gap:1rem; text-decoration:none; color:inherit">
+        <span style="width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; flex-shrink:0">
           {{ n.actor.username|first|upper }}
         </span>
         <div>
-          <div style="font-size:0.9rem">{{ n.verb }}</div>
+          <div style="font-size:0.9rem; font-weight:500">{{ n.verb }}</div>
           <div style="font-size:0.75rem; color:var(--muted); margin-top:0.25rem">{{ n.created_at|timesince }} ago</div>
         </div>
-      </div>
+      </a>
     {% empty %}
       <div style="padding:3rem; text-align:center; color:var(--muted)">You have no notifications.</div>
     {% endfor %}
