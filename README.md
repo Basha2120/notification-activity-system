@@ -31,19 +31,19 @@ NotifyHub is a comprehensive Django-based platform designed for modern social in
 
 1. Clone or Navigate to the Directory
    ```bash
-   cd notification_system
+   cd notification-activity-system-main
    ```
 
 2. Install Dependencies
    Ensure you have pip installed, then run:
    ```bash
-   pip install -r notification_system/requirements.txt
+   pip install -r requirements.txt
    ```
 
 3. Database Initialization
    Apply the migrations to set up your database schema:
    ```bash
-   cd notification_system
+   cd notification-activity-system-main
    python manage.py migrate
    ```
 
