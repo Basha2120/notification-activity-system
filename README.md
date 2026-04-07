@@ -47,7 +47,13 @@ NotifyHub is a comprehensive Django-based platform designed for modern social in
    python manage.py migrate
    ```
 
-4. Launch the Development Server
+4. Seed the Database
+   Populate the database with the required notification categories (like follows, comments, and mentions):
+   ```bash
+   python seed.py
+   ```
+
+5. Launch the Development Server
    Run the project using the development server:
    ```bash
    python manage.py runserver
